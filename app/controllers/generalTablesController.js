@@ -12,6 +12,17 @@ exports.addGeneral = async (req, res, next) => {
   }
 };
 
+// GET
+exports.fetchData = async (req, res, next) => {
+  try {
+    const fetchData = await GeneralTables.find();
+    res.json(fetchData);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
 // DELETE
 exports.deleteCategory = async (req, res, next) => {
   try {
