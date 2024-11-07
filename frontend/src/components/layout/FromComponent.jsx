@@ -21,7 +21,7 @@ import { styled } from '@mui/system';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 const FullscreenTableContainer = styled(TableContainer)({
-  height: '70vh',
+  height: '74vh',
   width: '80vw',
   margin: 'auto',
   borderRadius: '30px',
@@ -157,25 +157,30 @@ const FormComponent = () => {
   };
 
   return (
-    <FullscreenTableContainer component={Paper} sx={{ backgroundColor: 'A300', borderRadius: '30px' }}>
-      <Box display="flex" alignItems="center" justifyContent="end" sx={{ my: 2, px: 3 }}>
-        <TextField
-          label="Porcentaje Aplicado"
-          variant="outlined"
-          size="small"
-          value={porcentajeAplicado}
-          onChange={(e) => setPorcentajeAplicado(e.target.value)}
-          sx={{ width: '200px' }}
-        />
-        <TextField
-          label="Name"
-          variant="outlined"
-          size="small"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          sx={{ width: '200px', ml: 2 }}
-        />
-      </Box>
+    <FullscreenTableContainer component={Paper} sx={{ borderRadius: '30px' }}>
+      <Container sx={{display: 'flex', justifyContent: "space-between",alignContent: 'space-between', width:'100%' }}>
+        <Box display="flex" alignItems="center" justifyContent="start" sx={{ my: 2, px: 3 }}>
+          <Typography variant='h5' sx={{fontWeight: 'bold'}}>Load Updata</Typography>
+        </Box>
+        <Box display="flex" alignItems="center" justifyContent="end" sx={{ my: 2, px: 3 }}>
+          <TextField
+            label="Porcentaje Aplicado"
+            variant="outlined"
+            size="small"
+            value={porcentajeAplicado}
+            onChange={(e) => setPorcentajeAplicado(e.target.value)}
+            sx={{ width: '200px' }}
+          />
+          <TextField
+            label="Name"
+            variant="outlined"
+            size="small"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            sx={{ width: '200px', ml: 2 }}
+          />
+        </Box>
+      </Container>
       {Object.keys(sections).map((category) => (
         <div key={category}>
           <Typography sx={{ p: 1, fontWeight: 'bold', display: 'flex', backgroundColor: '#fff600', color: '#000' }}>

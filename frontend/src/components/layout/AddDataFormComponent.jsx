@@ -65,6 +65,7 @@ const FormComponent = () => {
 
   return (
     <FullscreenContainer sx={{ backgroundColor: 'primary.main' }}>
+      <Typography variant='h5' sx={{fontWeight: 'bold'}}>Add category and title</Typography>
       <TextField
         id="outlined-category"
         label="Category"
