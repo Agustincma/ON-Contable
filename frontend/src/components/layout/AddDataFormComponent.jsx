@@ -74,6 +74,14 @@ const FormComponent = () => {
         value={formData.category}
         onChange={(e) => handleInputChange('category', e.target.value)}
         error={!formData.category && messageType === 'error'} 
+        sx={{
+          width: '100%',
+          borderRadius: '30px',
+          display:'flex',
+          '& .MuiOutlinedInput-root': {
+            borderRadius: '30px',
+          },
+        }}
       />
       <TextField
         id="outlined-title"
@@ -83,19 +91,20 @@ const FormComponent = () => {
         value={formData.title}
         onChange={(e) => handleInputChange('title', e.target.value)}
         error={!formData.title && messageType === 'error'} 
+        sx={{
+          width: '100%',
+          borderRadius: '30px',
+          display:'flex',
+          '& .MuiOutlinedInput-root': {
+            borderRadius: '30px',
+          },
+        }}
       />
       <Button
         onClick={handleSubmit}
         variant="contained"
         color="primary"
-        sx={{
-          width: '200px',
-          borderRadius: '20px',
-          backgroundColor: '#fff600',
-          color: '#000',
-          outline: 'none',
-          border: 'none',
-        }}
+        sx={{ width: '200px', borderRadius: '30px', backgroundColor: '#fff600', color: '#000' }}
       >
         Enviar
       </Button>

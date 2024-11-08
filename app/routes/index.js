@@ -11,6 +11,8 @@ module.exports = () => {
   router.put("/update-country/:category", generalTables.updateCountry);
   router.put("/update-title/:category", generalTables.updateTitle);
   router.put("/update-currency/:category", generalTables.updateCurrency);
+  router.put("/generaltables/:id", generalTables.updateRecord);
+  router.get("/generaltables/:id", generalTables.specificRecord);
 
   // sections
 

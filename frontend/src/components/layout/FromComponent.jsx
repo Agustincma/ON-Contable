@@ -4,7 +4,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
   TableRow,
   TextField,
@@ -20,11 +19,19 @@ import {
 import { styled } from '@mui/system';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-const FullscreenTableContainer = styled(TableContainer)({
-  height: '74vh',
+// Estilos para el contenedor principal, actualizado para ocupar todo el contenedor y manejar el overflow
+const FullscreenTableContainer = styled(Paper)({
+  height: '70vh',
   width: '80vw',
   margin: 'auto',
+  padding: '20px',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'flex-start',
+  alignItems: 'stretch',
+  gap: '16px',
   borderRadius: '30px',
+  overflow: 'auto', // Habilita el desplazamiento si el contenido es más grande que el contenedor
 });
 
 const MessageContainer = styled(Container)(({ theme, messageType }) => ({
@@ -44,7 +51,6 @@ const FormComponent = () => {
   const [sections, setSections] = useState({});
   const [values, setValues] = useState({});
   const [errors, setErrors] = useState({});
-  const [porcentajeAplicado, setPorcentajeAplicado] = useState('');
   const [name, setName] = useState('');
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
@@ -88,12 +94,20 @@ const FormComponent = () => {
   const handleSubmit = async () => {
     let valid = true;
     const newErrors = {};
-    
+  
+    // Verificar si el campo 'name' está vacío
+    if (!name) {
+      valid = false;
+      setMessage('El campo "Name" es obligatorio.');
+      setMessageType('error');
+      setTimeout(() => setMessage(''), 5000); 
+    }
+  
     // Verificar si todas las columnas (excepto currency) tienen valores
     for (const titleId in values) {
       const { title, country } = values[titleId];
       newErrors[titleId] = {};
-
+  
       // Validación de campos
       if (!title) {
         newErrors[titleId].title = 'Este campo es obligatorio';
@@ -104,9 +118,9 @@ const FormComponent = () => {
         valid = false;
       }
     }
-
+  
     setErrors(newErrors);
-
+  
     if (valid) {
       try {
         for (const titleId in values) {
@@ -133,6 +147,7 @@ const FormComponent = () => {
       setTimeout(() => setMessage(''), 5000); 
     }
   };
+  
 
   const handleDeleteRow = async (titleId) => {
     try {
@@ -157,117 +172,132 @@ const FormComponent = () => {
   };
 
   return (
-    <FullscreenTableContainer component={Paper} sx={{ borderRadius: '30px' }}>
+    <FullscreenTableContainer>
       <Container sx={{display: 'flex', justifyContent: "space-between",alignContent: 'space-between', width:'100%' }}>
         <Box display="flex" alignItems="center" justifyContent="start" sx={{ my: 2, px: 3 }}>
           <Typography variant='h5' sx={{fontWeight: 'bold'}}>Load Updata</Typography>
         </Box>
         <Box display="flex" alignItems="center" justifyContent="end" sx={{ my: 2, px: 3 }}>
           <TextField
-            label="Porcentaje Aplicado"
-            variant="outlined"
-            size="small"
-            value={porcentajeAplicado}
-            onChange={(e) => setPorcentajeAplicado(e.target.value)}
-            sx={{ width: '200px' }}
-          />
-          <TextField
             label="Name"
             variant="outlined"
+            color="black"
             size="small"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            sx={{ width: '200px', ml: 2 }}
+            sx={{
+              width: '200px',
+              borderRadius: '30px',
+              display:'flex',
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '30px',
+              },
+            }}
+            error={!!message && !name} 
           />
         </Box>
+
       </Container>
-      {Object.keys(sections).map((category) => (
-        <div key={category}>
-          <Typography sx={{ p: 1, fontWeight: 'bold', display: 'flex', backgroundColor: '#fff600', color: '#000' }}>
-            {category.toUpperCase()}
-          </Typography>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell align="center" style={{ fontWeight: 'bold' }}>Título</TableCell>
-                <TableCell align="center" style={{ fontWeight: 'bold' }}>Valor</TableCell>
-                <TableCell align="center" style={{ fontWeight: 'bold' }}>Country</TableCell>
-                <TableCell align="center" style={{ fontWeight: 'bold' }}>Currency</TableCell>
-                <TableCell align="center" style={{ fontWeight: 'bold' }}>Acción</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {sections[category].map((item) => (
-                <TableRow key={item._id}>
-                  <TableCell align="center">{item.title}</TableCell>
-                  <TableCell align="center">
-                    <TextField
-                      fullWidth
-                      variant="outlined"
-                      size="small"
-                      onChange={(e) => handleInputChange(category, 'title', e.target.value, item._id)}
-                      error={!!errors[item._id]?.title}
-                      helperText={errors[item._id]?.title}
-                    />
-                  </TableCell>
-                  <TableCell align="center">
-                    <Select
-                      fullWidth
-                      variant="outlined"
-                      size="small"
-                      defaultValue=""
-                      onChange={(e) => handleInputChange(category, 'country', e.target.value, item._id)}
-                      error={!!errors[item._id]?.country}
-                    >
-                      <MenuItem value="Estados Unidos">Estados Unidos</MenuItem>
-                      <MenuItem value="Mexico">México</MenuItem>
-                      <MenuItem value="Peru">Perú</MenuItem>
-                      <MenuItem value="Chile">Chile</MenuItem>
-                      <MenuItem value="Argentina">Argentina</MenuItem>
-                    </Select>
-                    {errors[item._id]?.country && (
-                      <Typography variant="caption" color="error">{errors[item._id]?.country}</Typography>
-                    )}
-                  </TableCell>
-                  <TableCell align="center">
-                    <Select
-                      fullWidth
-                      variant="outlined"
-                      size="small"
-                      defaultValue="USD"
-                      onChange={(e) => handleInputChange(category, 'currency', e.target.value, item._id)}
-                    >
-                      <MenuItem value="USD">USD</MenuItem>
-                      <MenuItem value="MXN">MXN</MenuItem>
-                      <MenuItem value="EUR">EUR</MenuItem>
-                    </Select>
-                  </TableCell>
-                  <TableCell align="center">
-                    <IconButton onClick={() => handleDeleteRow(item._id)}>
-                      <DeleteIcon color="#fff59d" />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      ))}
-      <Box display="flex" justifyContent="center" my={2}>
+      <Box sx={{ flex: 1, overflow: 'auto' }}>
+        {Object.keys(sections).map((category) => (
+          <div key={category}>
+            <Typography sx={{ p: 1, fontWeight: 'bold', display: 'flex', justifyContent: 'center', backgroundColor: '#FFF600', color: '#1a1a1a', borderRadius: '30px' }}>
+              {category.toUpperCase()}
+            </Typography>
+            <Table>
+  <TableHead>
+    <TableRow>
+      <TableCell align="center" style={{ fontWeight: 'bold', width: '300px' }}>Título</TableCell>
+      <TableCell align="center" style={{ fontWeight: 'bold', width: '300px' }}>Valor</TableCell>
+      <TableCell align="center" style={{ fontWeight: 'bold', width: '300px' }}>Country</TableCell>
+      <TableCell align="center" style={{ fontWeight: 'bold', width: '300px' }}>Currency</TableCell>
+      <TableCell align="center" style={{ fontWeight: 'bold' }}>Acción</TableCell>
+    </TableRow>
+  </TableHead>
+  <TableBody>
+    {sections[category].map((item) => (
+      <TableRow key={item._id}>
+        <TableCell align="center">{item.title}</TableCell>
+        <TableCell align="center">
+          <TextField
+            fullWidth
+            variant="outlined"
+            color='black'
+            size="small"
+            onChange={(e) => handleInputChange(category, 'title', e.target.value, item._id)}
+            error={!!errors[item._id]?.title}
+            helperText={errors[item._id]?.title}
+            sx={{
+              borderRadius: '30px',
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '30px',
+              },
+            }}
+          />
+        </TableCell>
+        <TableCell align="center">
+          <Select
+            fullWidth
+            variant="outlined"
+            color='black'
+            size="small"
+            defaultValue={item.country || ""}
+            onChange={(e) => handleInputChange(category, 'country', e.target.value, item._id)}
+            error={!!errors[item._id]?.country}
+            sx={{borderRadius: '30px'}}
+          >
+            <MenuItem value="Estados Unidos">Estados Unidos</MenuItem>
+            <MenuItem value="Mexico">México</MenuItem>
+            <MenuItem value="Peru">Perú</MenuItem>
+            <MenuItem value="Colombia">Colombia</MenuItem>
+            <MenuItem value="Colombia">Argentina</MenuItem>
+            <MenuItem value="Colombia">Chile</MenuItem>
+          </Select>
+        </TableCell>
+        <TableCell align="center">
+          <Select
+            fullWidth
+            variant="outlined"
+            size="small"
+            value={values[item._id]?.currency || 'USD'}
+            onChange={(e) => handleInputChange(category, 'currency', e.target.value, item._id)}
+            error={!!errors[item._id]?.currency}
+            sx={{borderRadius: '30px'}}
+          >
+            <MenuItem value="USD">USD</MenuItem>
+            <MenuItem value="MXN">MXN</MenuItem>
+            <MenuItem value="PEN">PEN</MenuItem>
+            <MenuItem value="COP">COP</MenuItem>
+          </Select>
+        </TableCell>
+        <TableCell align="center">
+          <IconButton onClick={() => handleDeleteRow(item._id)} color="error">
+            <DeleteIcon />
+          </IconButton>
+        </TableCell>
+      </TableRow>
+    ))}
+  </TableBody>
+</Table>
+
+          </div>
+        ))}
+      </Box>
+
+      <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
         <Button
           variant="contained"
-          color="primary"
           onClick={handleSubmit}
-          sx={{ borderRadius: '20px', padding: '12px 20px', fontSize: '16px', backgroundColor: '#fff600', color: '#000' }}
+          color="primary"
+          sx={{ width: '200px', borderRadius: '30px', backgroundColor: '#fff600', color: '#000' }}
         >
           Enviar
         </Button>
       </Box>
+
       {message && (
         <MessageContainer messageType={messageType}>
-          <Typography variant="body2" sx={{ color: '#fff' }}>
-            {message}
-          </Typography>
+          <Typography variant="body1" sx={{color: '#fff'}}>{message}</Typography>
         </MessageContainer>
       )}
     </FullscreenTableContainer>
@@ -275,3 +305,13 @@ const FormComponent = () => {
 };
 
 export default FormComponent;
+
+
+{/* <TextField
+label="Porcentaje Aplicado"
+variant="outlined"
+size="small"
+value={porcentajeAplicado}
+onChange={(e) => setPorcentajeAplicado(e.target.value)}
+sx={{ width: '200px' }}
+/> */}

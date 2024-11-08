@@ -1,7 +1,7 @@
-// import React from 'react'
-
-export const FooterComponent = () => {
+const FooterComponent = () => {
   return (
-    <div>FooterComponent</div>
+    <h5>Copyright © 2015-2024</h5>
   )
 }
+
+export default FooterComponent

@@ -113,3 +113,35 @@ exports.updateCurrency = async (req, res, next) => {
     next();
   }
 };
+
+exports.updateRecord = async (req, res, next) => {
+  try {
+    const update = await GeneralTables.findOneAndUpdate(
+      {
+        _id: req.params.id,
+      },
+      req.body,
+      {
+        new: true,
+      }
+    );
+    res.json(update);
+  } catch (error) {
+    console.log(error);
+    next();
+  }
+};
+
+exports.specificRecord = async (req, res, next) => {
+  try {
+    const register = await GeneralTables.findById(req.params.id);
+    if (!register) {
+      res.json({ message: "El registro no existe!" });
+      next();
+    }
+    res.json(register);
+  } catch (error) {
+    console.log(error);
+    next();
+  }
+};
