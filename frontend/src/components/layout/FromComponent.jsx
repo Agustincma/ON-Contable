@@ -250,8 +250,8 @@ const FormComponent = () => {
             <MenuItem value="Mexico">México</MenuItem>
             <MenuItem value="Peru">Perú</MenuItem>
             <MenuItem value="Colombia">Colombia</MenuItem>
-            <MenuItem value="Colombia">Argentina</MenuItem>
-            <MenuItem value="Colombia">Chile</MenuItem>
+            <MenuItem value="Argentina">Argentina</MenuItem>
+            <MenuItem value="Chile">Chile</MenuItem>
           </Select>
         </TableCell>
         <TableCell align="center">
