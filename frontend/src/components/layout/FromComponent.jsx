@@ -19,7 +19,6 @@ import {
 import { styled } from '@mui/system';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-// Estilos para el contenedor principal, actualizado para ocupar todo el contenedor y manejar el overflow
 const FullscreenTableContainer = styled(Paper)({
   height: '70vh',
   width: '80vw',
@@ -31,7 +30,7 @@ const FullscreenTableContainer = styled(Paper)({
   alignItems: 'stretch',
   gap: '16px',
   borderRadius: '30px',
-  overflow: 'auto', // Habilita el desplazamiento si el contenido es más grande que el contenedor
+  overflow: 'auto',
 });
 
 const MessageContainer = styled(Container)(({ theme, messageType }) => ({
@@ -47,11 +46,20 @@ const MessageContainer = styled(Container)(({ theme, messageType }) => ({
   backgroundColor: messageType === 'success' ? '#00ff40' : '#ff4c4c',
 }));
 
+const months = [
+  "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+  "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+];
+
+const years = [2024, 2025, 2026];
+
 const FormComponent = () => {
   const [sections, setSections] = useState({});
   const [values, setValues] = useState({});
   const [errors, setErrors] = useState({});
   const [name, setName] = useState('');
+  const [month, setMonth] = useState('');
+  const [year, setYear] = useState('');
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
 
@@ -90,65 +98,66 @@ const FormComponent = () => {
       },
     }));
   };
-
   const handleSubmit = async () => {
     let valid = true;
     const newErrors = {};
   
-    // Verificar si el campo 'name' está vacío
-    if (!name) {
+    if (!name || !month || !year) {
       valid = false;
-      setMessage('El campo "Name" es obligatorio.');
+      setMessage('Los campos "Name", "Month" y "Year" son obligatorios.');
       setMessageType('error');
-      setTimeout(() => setMessage(''), 5000); 
+      setTimeout(() => setMessage(''), 5000);
+      return;
     }
   
-    // Verificar si todas las columnas (excepto currency) tienen valores
-    for (const titleId in values) {
-      const { title, country } = values[titleId];
-      newErrors[titleId] = {};
-  
-      // Validación de campos
-      if (!title) {
-        newErrors[titleId].title = 'Este campo es obligatorio';
-        valid = false;
+    // Filtramos los registros completos (donde todos los campos requeridos tienen valores)
+    const completeRecords = Object.entries(values).filter(([titleId, record]) => {
+      const { category, value, country } = record || {};
+      const hasAllRequiredValues = category && value && country;
+      if (!hasAllRequiredValues) {
+        newErrors[titleId] = {
+          value: value ? '' : 'Este campo es obligatorio',
+          country: country ? '' : 'Este campo es obligatorio',
+        };
       }
-      if (!country) {
-        newErrors[titleId].country = 'Este campo es obligatorio';
-        valid = false;
-      }
-    }
+      return hasAllRequiredValues;
+    });
   
-    setErrors(newErrors);
-  
-    if (valid) {
-      try {
-        for (const titleId in values) {
-          const { category, title, country, currency } = values[titleId];
-          await axios.post('http://localhost:3005/generaltables', {
-            category,
-            title,
-            country,
-            currency: currency || 'USD',
-            name: name,
-          });
-        }
-        setMessage('Datos enviados exitosamente.');
-        setMessageType('success');
-        setTimeout(() => setMessage(''), 5000); 
-      } catch (error) {
-        setMessage('Error al enviar los datos.');
-        setMessageType('error');
-        setTimeout(() => setMessage(''), 5000); 
-      }
-    } else {
+    // Si no hay registros completos, mostramos un mensaje de error
+    if (completeRecords.length === 0) {
+      setErrors(newErrors);
       setMessage('Por favor, complete todos los campos obligatorios.');
       setMessageType('error');
-      setTimeout(() => setMessage(''), 5000); 
+      setTimeout(() => setMessage(''), 5000);
+      return;
+    }
+  
+    setErrors(newErrors); // Actualizar errores en la interfaz
+  
+    try {
+      // Enviar solo registros completos
+      for (const [titleId, { category, value, country, currency }] of completeRecords) {
+        await axios.post('http://localhost:3005/category', {
+          category,
+          value,
+          country,
+          currency: currency || 'USD',
+          name,
+          month,
+          year,
+        });
+      }
+      setMessage('Datos enviados exitosamente.');
+      setMessageType('success');
+      setValues({}); // Limpiar valores tras el envío
+      setTimeout(() => setMessage(''), 5000);
+    } catch (error) {
+      setMessage('Error al enviar los datos.');
+      setMessageType('error');
+      setTimeout(() => setMessage(''), 5000);
     }
   };
   
-
   const handleDeleteRow = async (titleId) => {
     try {
       setValues((prevValues) => {
@@ -165,7 +174,7 @@ const FormComponent = () => {
         return newSections;
       });
 
-      await axios.delete(`http://localhost:3005/generaltables/${titleId}`);
+      await axios.delete(`http://localhost:3005/category/${titleId}`);
     } catch (error) {
       console.error('Error al eliminar la fila:', error);
     }
@@ -173,131 +182,156 @@ const FormComponent = () => {
 
   return (
     <FullscreenTableContainer>
-      <Container sx={{display: 'flex', justifyContent: "space-between",alignContent: 'space-between', width:'100%' }}>
+      <Container sx={{ display: 'flex', justifyContent: "space-between" }}>
         <Box display="flex" alignItems="center" justifyContent="start" sx={{ my: 2, px: 3 }}>
-          <Typography variant='h5' sx={{fontWeight: 'bold'}}>Load Updata</Typography>
+          <Typography variant='h5' sx={{ fontWeight: 'bold' }}>Load Updata</Typography>
         </Box>
-        <Box display="flex" alignItems="center" justifyContent="end" sx={{ my: 2, px: 3 }}>
+        <Box display="flex" alignItems="center" justifyContent="end" sx={{ my: 2, px: 3, gap: 1 }}>
           <TextField
             label="Name"
             variant="outlined"
-            color="black"
             size="small"
             value={name}
             onChange={(e) => setName(e.target.value)}
             sx={{
-              width: '200px',
+              width: '150px',
               borderRadius: '30px',
-              display:'flex',
+              color: 'black',
+              backgroundColor: '#fff',
               '& .MuiOutlinedInput-root': {
                 borderRadius: '30px',
               },
             }}
-            error={!!message && !name} 
+            error={!!message && !name}
           />
-        </Box>
 
+          <Box align="center" sx={{display: 'flex', width: '400px', justifyContent: 'space-around'}}>
+            <Select
+            label="Month"
+            variant="outlined"
+            size="small"
+            value={month}
+            onChange={(e) => setMonth(e.target.value)}
+            sx={{ width: 150, borderRadius: 30 }}
+            error={!!message && !month}
+            >
+              {months.map((month) => (
+                <MenuItem key={month} value={month}>
+                  {month}
+                </MenuItem>
+              ))}
+            </Select>
+
+            <Select
+              label="Year"
+              variant="outlined"
+              size="small"
+              value={year}
+              onChange={(e) => setYear(e.target.value)}
+              sx={{ width: 150, borderRadius: 30 }}
+              error={!!message && !year}
+            >
+              {years.map((year) => (
+                <MenuItem key={year} value={year}>
+                  {year}
+                </MenuItem>
+              ))}
+            </Select>
+          </Box>
+        </Box>
       </Container>
       <Box sx={{ flex: 1, overflow: 'auto' }}>
         {Object.keys(sections).map((category) => (
           <div key={category}>
-            <Typography sx={{ p: 1, fontWeight: 'bold', display: 'flex', justifyContent: 'center', backgroundColor: '#FFF600', color: '#1a1a1a', borderRadius: '30px' }}>
+            <Typography sx={{ p: 1, mt: 2, fontWeight: 'bold', display: 'flex', justifyContent: 'center', backgroundColor: '#FFF600', color: '#1a1a1a', borderRadius: '30px' }}>
               {category.toUpperCase()}
             </Typography>
             <Table>
-  <TableHead>
-    <TableRow>
-      <TableCell align="center" style={{ fontWeight: 'bold', width: '300px' }}>Título</TableCell>
-      <TableCell align="center" style={{ fontWeight: 'bold', width: '300px' }}>Valor</TableCell>
-      <TableCell align="center" style={{ fontWeight: 'bold', width: '300px' }}>Country</TableCell>
-      <TableCell align="center" style={{ fontWeight: 'bold', width: '300px' }}>Currency</TableCell>
-      <TableCell align="center" style={{ fontWeight: 'bold' }}>Acción</TableCell>
-    </TableRow>
-  </TableHead>
-  <TableBody>
-    {sections[category].map((item) => (
-      <TableRow key={item._id}>
-        <TableCell align="center">{item.title}</TableCell>
-        <TableCell align="center">
-          <TextField
-            fullWidth
-            variant="outlined"
-            color='black'
-            size="small"
-            onChange={(e) => handleInputChange(category, 'title', e.target.value, item._id)}
-            error={!!errors[item._id]?.title}
-            helperText={errors[item._id]?.title}
-            sx={{
-              borderRadius: '30px',
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '30px',
-              },
-            }}
-          />
-        </TableCell>
-        <TableCell align="center">
-          <Select
-            fullWidth
-            variant="outlined"
-            color='black'
-            size="small"
-            defaultValue={item.country || ""}
-            onChange={(e) => handleInputChange(category, 'country', e.target.value, item._id)}
-            error={!!errors[item._id]?.country}
-            sx={{borderRadius: '30px'}}
-          >
-            <MenuItem value="Estados Unidos">Estados Unidos</MenuItem>
-            <MenuItem value="Mexico">México</MenuItem>
-            <MenuItem value="Peru">Perú</MenuItem>
-            <MenuItem value="Colombia">Colombia</MenuItem>
-            <MenuItem value="Argentina">Argentina</MenuItem>
-            <MenuItem value="Chile">Chile</MenuItem>
-          </Select>
-        </TableCell>
-        <TableCell align="center">
-          <Select
-            fullWidth
-            variant="outlined"
-            size="small"
-            value={values[item._id]?.currency || 'USD'}
-            onChange={(e) => handleInputChange(category, 'currency', e.target.value, item._id)}
-            error={!!errors[item._id]?.currency}
-            sx={{borderRadius: '30px'}}
-          >
-            <MenuItem value="USD">USD</MenuItem>
-            <MenuItem value="MXN">MXN</MenuItem>
-            <MenuItem value="PEN">PEN</MenuItem>
-            <MenuItem value="COP">COP</MenuItem>
-          </Select>
-        </TableCell>
-        <TableCell align="center">
-          <IconButton onClick={() => handleDeleteRow(item._id)} color="error">
-            <DeleteIcon />
-          </IconButton>
-        </TableCell>
-      </TableRow>
-    ))}
-  </TableBody>
-</Table>
-
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center" style={{ fontWeight: 'bold', width: '300px' }}>Título</TableCell>
+                  <TableCell align="center" style={{ fontWeight: 'bold', width: '300px' }}>Valor</TableCell>
+                  <TableCell align="center" style={{ fontWeight: 'bold', width: '300px' }}>Country</TableCell>
+                  <TableCell align="center" style={{ fontWeight: 'bold', width: '300px' }}>Currency</TableCell>
+                  <TableCell align="center" style={{ fontWeight: 'bold' }}>Acción</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {sections[category].map((item) => (
+                  <TableRow key={item._id}>
+                    <TableCell align="center">{item.title}</TableCell>
+                    <TableCell align="center">
+                      <TextField
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        onChange={(e) => handleInputChange(category, 'value', e.target.value, item._id)}
+                        error={!!errors[item._id]?.value}
+                        helperText={errors[item._id]?.value}
+                        sx={{
+                          width: '100%',
+                          borderRadius: '30px',
+                          color: 'black',
+                          backgroundColor: '#fff',
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: '30px',
+                          },
+                        }}
+                      />
+                    </TableCell>
+                    <TableCell align="center">
+                      <Select
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        defaultValue={item.country || ""}
+                        onChange={(e) => handleInputChange(category, 'country', e.target.value, item._id)}
+                        error={!!errors[item._id]?.country}
+                        sx={{borderRadius: '30px'}}
+                      >
+                        <MenuItem value="Estados Unidos">Estados Unidos</MenuItem>
+                        <MenuItem value="Mexico">México</MenuItem>
+                        <MenuItem value="Peru">Perú</MenuItem>
+                        <MenuItem value="Argentina">Argentina</MenuItem>
+                        <MenuItem value="Chile">Chile</MenuItem>
+                      </Select>
+                    </TableCell>
+                    <TableCell align="center">
+                      <Select
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        defaultValue={item.currency || "USD"}
+                        onChange={(e) => handleInputChange(category, 'currency', e.target.value, item._id)}
+                        sx={{borderRadius: '30px'}}
+                      > 
+                        <MenuItem value="USD">USD</MenuItem>
+                        <MenuItem value="MXN">MXN</MenuItem>
+                        <MenuItem value="PEN">PEN</MenuItem>
+                        <MenuItem value="ARS">ARS</MenuItem>
+                        <MenuItem value="CLP">CPL</MenuItem>
+                      </Select>
+                    </TableCell>
+                    <TableCell align="center">
+                      <IconButton onClick={() => handleDeleteRow(item._id)}>
+                        <DeleteIcon color="error" />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         ))}
       </Box>
-
-      <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
-        <Button
-          variant="contained"
-          onClick={handleSubmit}
-          color="primary"
-          sx={{ width: '200px', borderRadius: '30px', backgroundColor: '#fff600', color: '#000' }}
-        >
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+        <Button variant="contained" onClick={handleSubmit} sx={{ width: '200px', borderRadius: '30px', backgroundColor: '#fff600', color: '#000' }}>
           Enviar
         </Button>
       </Box>
-
       {message && (
         <MessageContainer messageType={messageType}>
-          <Typography variant="body1" sx={{color: '#fff'}}>{message}</Typography>
+          <Typography variant="body1" sx={{ color: '#1a1a1a' }}>{message}</Typography>
         </MessageContainer>
       )}
     </FullscreenTableContainer>
@@ -305,13 +339,3 @@ const FormComponent = () => {
 };
 
 export default FormComponent;
-
-
-{/* <TextField
-label="Porcentaje Aplicado"
-variant="outlined"
-size="small"
-value={porcentajeAplicado}
-onChange={(e) => setPorcentajeAplicado(e.target.value)}
-sx={{ width: '200px' }}
-/> */}

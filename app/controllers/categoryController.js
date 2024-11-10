@@ -1,14 +1,14 @@
-const GeneralTables = require("../models/GeneralTables");
 const CategoryTable = require("../models/CategoryData");
 
 // ADD
 exports.addGeneral = async (req, res, next) => {
-  const category = await GeneralTables(req.body);
   try {
+    const category = await CategoryTable(req.body);
     await category.save();
-    res.json({ message: "Se añadio una nueva categoria!" });
+    res.json({ message: "Se añadió una nueva categoría!" });
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    res.status(500).json({ message: "Hubo un error al añadir la categoría." });
     next();
   }
 };
@@ -16,7 +16,7 @@ exports.addGeneral = async (req, res, next) => {
 // GET
 exports.fetchData = async (req, res, next) => {
   try {
-    const fetchData = await GeneralTables.find();
+    const fetchData = await CategoryTable.find();
     res.json(fetchData);
   } catch (error) {
     console.log(error);
@@ -27,7 +27,7 @@ exports.fetchData = async (req, res, next) => {
 // DELETE
 exports.deleteCategory = async (req, res, next) => {
   try {
-    const category = await GeneralTables.findOneAndDelete({
+    const category = await CategoryTable.findOneAndDelete({
       category: req.params.category,
     });
     res.json({ message: "La categoria ha sido eliminada!" });
@@ -40,7 +40,7 @@ exports.deleteCategory = async (req, res, next) => {
 // Actualizar valores segun categoria
 exports.updateCountry = async (req, res, next) => {
   try {
-    const updatedCountry = await GeneralTables.findOneAndUpdate(
+    const updatedCountry = await CategoryTable.findOneAndUpdate(
       {
         category: req.params.category,
       },
@@ -65,7 +65,7 @@ exports.updateCountry = async (req, res, next) => {
 };
 exports.updateTitle = async (req, res, next) => {
   try {
-    const updateTitle = await GeneralTables.findOneAndUpdate(
+    const updateTitle = await CategoryTable.findOneAndUpdate(
       {
         category: req.params.category,
       },
@@ -90,7 +90,7 @@ exports.updateTitle = async (req, res, next) => {
 };
 exports.updateCurrency = async (req, res, next) => {
   try {
-    const updateCurrency = await GeneralTables.findOneAndUpdate(
+    const updateCurrency = await CategoryTable.findOneAndUpdate(
       {
         category: req.params.category,
       },
@@ -117,7 +117,7 @@ exports.updateCurrency = async (req, res, next) => {
 
 exports.updateRecord = async (req, res, next) => {
   try {
-    const update = await GeneralTables.findOneAndUpdate(
+    const update = await CategoryTable.findOneAndUpdate(
       {
         _id: req.params.id,
       },
@@ -135,24 +135,12 @@ exports.updateRecord = async (req, res, next) => {
 
 exports.specificRecord = async (req, res, next) => {
   try {
-    const register = await GeneralTables.findById(req.params.id);
+    const register = await CategoryTable.findById(req.params.id);
     if (!register) {
       res.json({ message: "El registro no existe!" });
       next();
     }
     res.json(register);
-  } catch (error) {
-    console.log(error);
-    next();
-  }
-};
-
-// ADD - category
-exports.addGeneralCategory = async (req, res, next) => {
-  const category = await CategoryTable(req.body);
-  try {
-    await category.save();
-    res.json({ message: "Se añadio una nueva categoria!" });
   } catch (error) {
     console.log(error);
     next();

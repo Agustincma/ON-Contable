@@ -69,7 +69,7 @@ const HistoricalComponent = () => {
   // Fetch data on component mount
   const fetchHistoricalData = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/generaltables/');
+      const response = await axios.get('http://localhost:3005/category/');
       setHistoricalData(response.data);
       setFilteredData(response.data);
       const uniqueNames = [...new Set(response.data.map((record) => record.name))];
@@ -99,10 +99,12 @@ const HistoricalComponent = () => {
     setIdInput('');
     setFormData({
       category: '',
-      title: '',
+      value: '',
       country: '',
       currency: '',
-      name: ''
+      name: '',
+      month: '',
+      year: '',
     });
   };
 
@@ -113,14 +115,16 @@ const HistoricalComponent = () => {
   const handleSearch = async () => {
     if (idInput) {
       try {
-        const response = await axios.get(`http://localhost:3005/generaltables/${idInput}`);
+        const response = await axios.get(`http://localhost:3005/category/${idInput}`);
         if (response.data) {
           setFormData({
             category: response.data.category || '',
-            title: response.data.title || '',
+            value: response.data.value || '',
             country: response.data.country || '',
             currency: response.data.currency || '',
-            name: response.data.name || ''
+            name: response.data.name || '',
+            month: response.data.month || '',
+            year: response.data.year || ''
           });
         }
       } catch (error) {
@@ -131,7 +135,7 @@ const HistoricalComponent = () => {
 
   const handleSubmit = async () => {
     try {
-      await axios.put(`http://localhost:3005/generaltables/${idInput}`, formData);
+      await axios.put(`http://localhost:3005/category/${idInput}`, formData);
       handleCloseModal();
       await fetchHistoricalData(); // Recarga los datos después de enviar el formulario
     } catch (error) {
@@ -174,13 +178,15 @@ const HistoricalComponent = () => {
           <TableHead>
             <TableRow>
               <TableCell align="center">ID</TableCell>
-              <TableCell align="center">Categoría</TableCell>
-              <TableCell align="center">Título</TableCell>
-              <TableCell align="center">País</TableCell>
-              <TableCell align="center">Moneda</TableCell>
-              <TableCell align="center">Nombre</TableCell>
-              <TableCell align="center">Fecha de Creación</TableCell>
-              <TableCell align="center">Fecha de Actualización</TableCell>
+              <TableCell align="center">Category</TableCell>
+              <TableCell align="center">Value</TableCell>
+              <TableCell align="center">Country</TableCell>
+              <TableCell align="center">Currency</TableCell>
+              <TableCell align="center">Name</TableCell>
+              <TableCell align="center">Month</TableCell>
+              <TableCell align="center">Year</TableCell>
+              <TableCell align="center">Start Date</TableCell>
+              <TableCell align="center">Up-Date</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -188,10 +194,12 @@ const HistoricalComponent = () => {
               <TableRow key={record._id}>
                 <TableCell align="center">{record._id}</TableCell>
                 <TableCell align="center">{record.category}</TableCell>
-                <TableCell align="center">{record.title}</TableCell>
+                <TableCell align="center">{record.value}</TableCell>
                 <TableCell align="center">{record.country}</TableCell>
                 <TableCell align="center">{record.currency}</TableCell>
                 <TableCell align="center">{record.name}</TableCell>
+                <TableCell align="center">{record.month}</TableCell>
+                <TableCell align="center">{record.year}</TableCell>
                 <TableCell align="center">{formatDate(record.createdAt)}</TableCell>
                 <TableCell align="center">{formatDate(record.updatedAt)}</TableCell>
               </TableRow>
@@ -252,7 +260,7 @@ const HistoricalComponent = () => {
 
           {/* Campos del formulario */}
           <TextField
-            label="Categoría"
+            label="Category"
             value={formData.category}
             onChange={(e) => setFormData({ ...formData, category: e.target.value })}
             fullWidth
@@ -269,9 +277,9 @@ const HistoricalComponent = () => {
             }}
           />
           <TextField
-            label="Título"
-            value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            label="Value"
+            value={formData.value}
+            onChange={(e) => setFormData({ ...formData, value: e.target.value })}
             fullWidth
             margin="normal"
             variant="outlined"
@@ -286,7 +294,7 @@ const HistoricalComponent = () => {
             }}
           />
           <TextField
-            label="País"
+            label="Country"
             value={formData.country}
             onChange={(e) => setFormData({ ...formData, country: e.target.value })}
             fullWidth
@@ -303,7 +311,7 @@ const HistoricalComponent = () => {
             }}
           />
           <TextField
-            label="Moneda"
+            label="Currency"
             value={formData.currency}
             onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
             fullWidth
@@ -320,9 +328,43 @@ const HistoricalComponent = () => {
             }}
           />
           <TextField
-            label="Nombre"
+            label="Name"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            sx={{
+              width: '100%',
+              borderRadius: '30px',
+              color: 'black',
+              backgroundColor: '#fff',
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '30px',
+              },
+            }}
+          />
+          <TextField
+            label="Month"
+            value={formData.month}
+            onChange={(e) => setFormData({ ...formData, month: e.target.value })}
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            sx={{
+              width: '100%',
+              borderRadius: '30px',
+              color: 'black',
+              backgroundColor: '#fff',
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '30px',
+              },
+            }}
+          />
+          <TextField
+            label="Year"
+            value={formData.year}
+            onChange={(e) => setFormData({ ...formData, year: e.target.value })}
             fullWidth
             margin="normal"
             variant="outlined"
