@@ -137,9 +137,14 @@ const FormComponent = () => {
     try {
       // Enviar solo registros completos
       for (const [titleId, { category, value, country, currency }] of completeRecords) {
+        // Obtener el título de la fila (usando el titleId)
+        const item = sections[category].find((item) => item._id === titleId);
+        const title = item ? item.title : '';
+  
         await axios.post('http://localhost:3005/category', {
           category,
           value,
+          title,  // Título de la fila
           country,
           currency: currency || 'USD',
           name,
@@ -157,6 +162,7 @@ const FormComponent = () => {
       setTimeout(() => setMessage(''), 5000);
     }
   };
+  
   
   const handleDeleteRow = async (titleId) => {
     try {
@@ -194,7 +200,7 @@ const FormComponent = () => {
             value={name}
             onChange={(e) => setName(e.target.value)}
             sx={{
-              width: '150px',
+              width: '250px',
               borderRadius: '30px',
               color: 'black',
               backgroundColor: '#fff',

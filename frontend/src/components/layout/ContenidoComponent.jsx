@@ -11,6 +11,8 @@ import FormIcon from '@mui/icons-material/Assignment';
 import AddIcon from '@mui/icons-material/Add';
 import HistoryIcon from '@mui/icons-material/History';
 import BarChartIcon from '@mui/icons-material/BarChart';
+import PercentageTable from './AnualDataComponent';
+import BarChart from './BarChart'
 
 export default function LabTabs() {
   const [value, setValue] = React.useState('1');
@@ -96,6 +98,27 @@ export default function LabTabs() {
               icon={<BarChartIcon fontSize="small" sx={{ color: "#fff" }} />}
               iconPosition="start"
               label="Anual"
+              value="4"
+              sx={{
+                color: '#FFF600',
+                backgroundColor: '#1a1a1a',
+                borderRadius: '30px',
+                ml: 1,
+                height: '40px',
+                minHeight: '40px',
+                fontSize: '0.75rem',
+                border: 'none',
+                '&:focus': { outline: 'none' },
+                '&.Mui-selected': {
+                  color: '#fff',
+                  backgroundColor: '#6F6E6E',
+                },
+              }}
+            />
+            <Tab
+              icon={<BarChartIcon fontSize="small" sx={{ color: "#fff" }} />}
+              iconPosition="start"
+              label="Charts"
               value="5"
               sx={{
                 color: '#FFF600',
@@ -125,8 +148,11 @@ export default function LabTabs() {
         <TabPanel value="3" sx={{ transition: 'opacity 0.5s ease', opacity: value === '3' ? 1 : 0 }}>
           <HistoricalComponent />
         </TabPanel>
+        <TabPanel value="4" sx={{ transition: 'opacity 0.5s ease', opacity: value === '4' ? 1 : 0 }}>
+          <PercentageTable />
+        </TabPanel>
         <TabPanel value="5" sx={{ transition: 'opacity 0.5s ease', opacity: value === '5' ? 1 : 0 }}>
-          <HistoricalComponent />
+          <BarChart/>
         </TabPanel>
       </TabContext>
     </Box>
