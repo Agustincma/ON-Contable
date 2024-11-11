@@ -13,7 +13,6 @@ import {
 import { Paper } from "@mui/material";
 import styled from "@emotion/styled";
 
-// Definimos estilos personalizados para el contenedor
 const FullscreenContainer = styled(Paper)({
   height: "70vh",
   width: "80vw",
@@ -30,7 +29,6 @@ const FullscreenContainer = styled(Paper)({
 const BarChartComponent = () => {
   const [data, setData] = useState([]);
 
-  // Función para formatear los datos para Recharts
   const formatData = (rawData) => {
     const formattedData = Array.from({ length: 12 }, (_, i) => ({ month: i }));
 
@@ -73,12 +71,11 @@ const BarChartComponent = () => {
           <Tooltip />
           <Legend />
 
-          {/* Generamos una barra para cada título y año */}
           {data.length > 0 && Object.keys(data[0]).filter(key => key !== "month").map((key, index) => (
             <Bar
               key={key}
               dataKey={key}
-              fill={colors[index % colors.length]} // Usar colores apagados cíclicamente
+              fill={colors[index % colors.length]} 
             />
           ))}
         </BarChart>

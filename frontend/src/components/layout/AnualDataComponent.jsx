@@ -24,13 +24,12 @@ const PercentageTable = () => {
   const [filteredData, setFilteredData] = useState([]);
 
   useEffect(() => {
-    // Obtener los datos del endpoint cuando se cargue el componente
     axios.get('http://localhost:3005/category/')
       .then(response => {
         // Verificar que la respuesta tenga la estructura esperada
         if (Array.isArray(response.data)) {
           setData(response.data);
-          setFilteredData(response.data); // Al principio mostramos todos los datos
+          setFilteredData(response.data);
         } else {
           console.error('Data format is incorrect', response.data);
         }
@@ -47,7 +46,7 @@ const PercentageTable = () => {
     if (selectedYear) {
       setFilteredData(data.filter(item => item.year === selectedYear));
     } else {
-      setFilteredData(data); // Mostrar todos los años si no hay filtro
+      setFilteredData(data);
     }
   };
 
@@ -61,7 +60,6 @@ const PercentageTable = () => {
             // El primer mes (Enero) se calcula directamente
             newValue += (newValue * percentage) / 100;
           } else {
-            // Los demás meses se calculan sobre el mes anterior
             newValue += (newValue * percentage) / 100;
           }
           return newValue.toFixed(2);
@@ -76,7 +74,7 @@ const PercentageTable = () => {
     setFilteredData(updatedData);
   };
 
-  // Definición de los meses en el orden correcto
+
   const monthsOrder = [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
@@ -89,7 +87,7 @@ const PercentageTable = () => {
       name: item.name,
       country: item.country,
       title: item.title,
-      value: item.value, // Asegúrate de que este valor esté calculado previamente
+      value: item.value, 
       year: item.year,
       months: item.months,
     }));
@@ -187,7 +185,6 @@ const PercentageTable = () => {
                   ))}
                 </TableRow>
               ) : (
-                // Si no hay meses válidos, mostrar un mensaje
                 <TableRow key={item._id}>
                   <TableCell colSpan={14} align="center">No data available</TableCell>
                 </TableRow>
