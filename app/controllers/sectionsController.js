@@ -11,11 +11,9 @@ exports.addCategoryAndTitle = async (req, res, next) => {
     // Capturar error de índice único (MongoDB) si el registro ya existe
     if (error.code === 11000) {
       // Código 11000 es para errores de clave duplicada en MongoDB
-      return res
-        .status(400)
-        .json({
-          message: "Ya existe una entrada con la misma categoría y título.",
-        });
+      return res.status(400).json({
+        message: "Ya existe una entrada con la misma categoría y título.",
+      });
     }
     console.error(error);
     next(error); // Pasar el error al manejador de errores

@@ -1,7 +1,8 @@
 const express = require("express");
 const sectionsTables = require("../controllers/sectionsController");
-const processedTable = require("../controllers/dataAnualController");
+// const processedTable = require("../controllers/dataAnualController");
 const categoryTable = require("../controllers/categoryController");
+const SaveData = require("../controllers/saveDataController");
 const router = express.Router();
 
 module.exports = () => {
@@ -20,7 +21,11 @@ module.exports = () => {
   router.post("/sections", sectionsTables.addCategoryAndTitle);
 
   // Processed
-  router.post("/procesar-generaltables", processedTable.dataAnual);
+  // router.post("/procesar-generaltables", processedTable.dataAnual);
+
+  // Save Data
+  router.post("/save-data", SaveData.addData);
+  router.get("/save-data", SaveData.fetchSaveData);
 
   return router;
 };

@@ -10,6 +10,9 @@ const CategoryData = new Schema(
     value: {
       type: Number,
     },
+    title: {
+      type: String,
+    },
     country: {
       type: String,
       trim: true,
@@ -32,9 +35,6 @@ const CategoryData = new Schema(
     },
   },
   { timestamps: true }
-); // Agregar timestamps
-
-// Asegurar que el título y el nombre sean únicos
-CategoryData.index({ category: 1, name: 1 }, { unique: true });
+);
 
 module.exports = mongoose.model("CategoryData", CategoryData);

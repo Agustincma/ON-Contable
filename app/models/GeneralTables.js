@@ -26,9 +26,8 @@ const GeneralTables = new Schema(
     },
   },
   { timestamps: true }
-); // Agregar timestamps
+);
 
-// Asegurar que el título y el nombre sean únicos
 GeneralTables.index({ title: 1, name: 1 }, { unique: true });
 
 module.exports = mongoose.model("GeneralTable", GeneralTables);
