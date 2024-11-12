@@ -1,3 +1,9 @@
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import LoginView from './views/LoginView'
+import CreateUserView from './views/CreateUserView'
+import { Navigate } from 'react-router-dom';
+
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 
@@ -50,7 +56,14 @@ function App() {
             alignItems: 'center', 
             justifyContent: 'center' 
           }}>
-            <ContenidoComponent/>
+            
+            <Routes>
+              <Route path='/login' element={<LoginView />} />
+              <Route path='/create' element={<CreateUserView/>} />
+              <Route path='/principal' element={<ContenidoComponent/>} />
+              <Route path="*" element={<Navigate to="/login" />} /> {/* Ruta por defecto */}
+            </Routes>
+
           </Grid>
           
           {/* Footer */}

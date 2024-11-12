@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const express = require("express");
 const routes = require("./routes/index");
+const authRoutes = require("./routes/authRoutes");
 const cors = require("cors");
 const app = express();
 const port = 3005;
@@ -20,6 +21,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 // Rutas
 app.use("/", routes());
+app.use("/auth", authRoutes);
 app.listen(port, () => {
   console.log(`El servidor esta corriendo en el puerto ${port} ✅`);
 });

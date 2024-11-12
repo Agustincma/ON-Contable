@@ -3,6 +3,7 @@ const sectionsTables = require("../controllers/sectionsController");
 // const processedTable = require("../controllers/dataAnualController");
 const categoryTable = require("../controllers/categoryController");
 const SaveData = require("../controllers/saveDataController");
+const authController = require("../controllers/authController");
 const router = express.Router();
 
 module.exports = () => {
@@ -26,6 +27,9 @@ module.exports = () => {
   // Save Data
   router.post("/save-data", SaveData.addData);
   router.get("/save-data", SaveData.fetchSaveData);
+
+  //Auth
+  router.post("/login", authController.login);
 
   return router;
 };
