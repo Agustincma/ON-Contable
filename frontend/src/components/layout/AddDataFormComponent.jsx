@@ -208,21 +208,21 @@ const FormComponent = () => {
                 alignSelf: 'center',
               }}
             >
-              Enviar
+              Send
             </Button>
           </AccordionDetails>
         </Accordion>
 
         {/* Delete Category Accordion */}
         <Accordion sx={{ width: '100%' }}>
-          <AccordionSummary>Eliminar Categoria</AccordionSummary>
+          <AccordionSummary>Delete Category</AccordionSummary>
           <AccordionDetails sx={{ marginTop: '20px' }}>
             <FormControl fullWidth>
-              <InputLabel>Selecciona una categoría</InputLabel>
+              <InputLabel>Selected Category</InputLabel>
               <Select
                 value={selectedCategory}
                 onChange={handleCategoryChange}
-                label="Selecciona una categoría"
+                label="Selected Category"
                 sx={{
                   width: '100%',
                   borderRadius: '30px',
@@ -252,21 +252,21 @@ const FormComponent = () => {
                 alignSelf: 'center',
               }}
             >
-              Eliminar
+              Delete
             </Button>
           </AccordionDetails>
         </Accordion>
 
         {/* Delete Category and Title Accordion */}
         <Accordion sx={{ width: '100%' }}>
-          <AccordionSummary>Eliminar Categoria y Titulo</AccordionSummary>
+          <AccordionSummary>Delete Category and Title</AccordionSummary>
           <AccordionDetails sx={{ marginTop: '20px' }}>
             <FormControl fullWidth>
-              <InputLabel>Selecciona una categoría</InputLabel>
+              <InputLabel>Selected Category</InputLabel>
               <Select
                 value={selectedCategory}
                 onChange={handleCategoryChange}
-                label="Selecciona una categoría"
+                label="Selected Category"
                 sx={{
                   width: '100%',
                   borderRadius: '30px',
@@ -284,11 +284,11 @@ const FormComponent = () => {
               </Select>
             </FormControl>
             <FormControl fullWidth sx={{ marginTop: '20px' }}>
-              <InputLabel>Selecciona un título</InputLabel>
+              <InputLabel>Selected Title</InputLabel>
               <Select
                 value={selectedTitle}
                 onChange={handleTitleChange}
-                label="Selecciona un título"
+                label="Selected Title"
                 sx={{
                   width: '100%',
                   borderRadius: '30px',
@@ -318,7 +318,7 @@ const FormComponent = () => {
                 alignSelf: 'center',
               }}
             >
-              Eliminar
+              Delete
             </Button>
           </AccordionDetails>
         </Accordion>
