@@ -16,11 +16,13 @@ import {
   Button,
   Modal,
   TextField,
-  Typography
+  Typography,
+  IconButton
 } from '@mui/material';
 import { styled } from '@mui/system';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const FullscreenContainer = styled(Paper)({
   height: '70vh',
@@ -82,6 +84,15 @@ const HistoricalComponent = () => {
   useEffect(() => {
     fetchHistoricalData();
   }, []);
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3005/register/${id}`);
+      setFilteredData(filteredData.filter((record) => record._id !== id));
+    } catch (error) {
+      console.error('Error deleting record:', error);
+    }
+  };
 
   const handleFilterChange = (event) => {
     const selectedName = event.target.value;
@@ -187,6 +198,7 @@ const HistoricalComponent = () => {
               <TableCell align="center">Year</TableCell>
               <TableCell align="center">Start Date</TableCell>
               <TableCell align="center">Up-Date</TableCell>
+              <TableCell align="center">Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -202,6 +214,9 @@ const HistoricalComponent = () => {
                 <TableCell align="center">{record.year}</TableCell>
                 <TableCell align="center">{formatDate(record.createdAt)}</TableCell>
                 <TableCell align="center">{formatDate(record.updatedAt)}</TableCell>
+                <IconButton onClick={() => handleDelete(record._id)} color="error">
+                  <DeleteIcon />
+                </IconButton>
               </TableRow>
             ))}
           </TableBody>
@@ -266,6 +281,7 @@ const HistoricalComponent = () => {
             fullWidth
             margin="normal"
             variant="outlined"
+            disabled
             sx={{
               width: '100%',
               borderRadius: '30px',
@@ -300,6 +316,7 @@ const HistoricalComponent = () => {
             fullWidth
             margin="normal"
             variant="outlined"
+            disabled
             sx={{
               width: '100%',
               borderRadius: '30px',
@@ -317,6 +334,7 @@ const HistoricalComponent = () => {
             fullWidth
             margin="normal"
             variant="outlined"
+            disabled
             sx={{
               width: '100%',
               borderRadius: '30px',
@@ -334,6 +352,7 @@ const HistoricalComponent = () => {
             fullWidth
             margin="normal"
             variant="outlined"
+            disabled
             sx={{
               width: '100%',
               borderRadius: '30px',
@@ -351,6 +370,7 @@ const HistoricalComponent = () => {
             fullWidth
             margin="normal"
             variant="outlined"
+            disabled
             sx={{
               width: '100%',
               borderRadius: '30px',
@@ -368,6 +388,7 @@ const HistoricalComponent = () => {
             fullWidth
             margin="normal"
             variant="outlined"
+            disabled
             sx={{
               width: '100%',
               borderRadius: '30px',

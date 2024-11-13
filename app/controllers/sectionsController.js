@@ -29,3 +29,55 @@ exports.allCategoryAndTitle = async (req, res, next) => {
     next();
   }
 };
+
+exports.deleteAllCategory = async (req, res, next) => {
+  try {
+    const { category } = req.params; // Obtén la categoría del parámetro de la URL
+
+    // Elimina todos los registros que coincidan con la categoría
+    const result = await SectionTables.deleteMany({ category });
+
+    // Verificamos si se eliminaron registros
+    if (result.deletedCount === 0) {
+      return res
+        .status(404)
+        .json({ message: "No se encontraron registros para esa categoría" });
+    }
+
+    // Respondemos con éxito
+    res.json({
+      message: `Se eliminaron ${result.deletedCount} registros de la categoría "${category}"`,
+    });
+  } catch (error) {
+    console.log(error);
+    next(error); // Llama al siguiente middleware con el error
+  }
+};
+
+// Controlador para eliminar un registro por categoría y título
+exports.deleteByCategoryAndTitle = async (req, res, next) => {
+  try {
+    const { category, title } = req.params; // Obtenemos los valores de category y title desde los parámetros de la URL
+
+    // Buscamos y eliminamos el registro que coincida con ambos campos: category y title
+    const result = await SectionTables.deleteOne({ category, title });
+
+    // Si no se encontró ningún registro para eliminar
+    if (result.deletedCount === 0) {
+      return res
+        .status(404)
+        .json({
+          message:
+            "No se encontró el registro con la categoría y título proporcionados",
+        });
+    }
+
+    // Respondemos con éxito
+    res.json({
+      message: `El registro con categoría "${category}" y título "${title}" ha sido eliminado`,
+    });
+  } catch (error) {
+    console.log(error);
+    next(error); // Llama al siguiente middleware con el error
+  }
+};

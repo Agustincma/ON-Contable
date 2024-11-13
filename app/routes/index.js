@@ -15,11 +15,20 @@ module.exports = () => {
   router.put("/update-currency/:category", categoryTable.updateCurrency);
   router.put("/category/:id", categoryTable.updateRecord);
   router.get("/category/:id", categoryTable.specificRecord);
+  router.delete("/register/:id", categoryTable.deleteIdCategory);
 
   // sections
 
   router.get("/sections", sectionsTables.allCategoryAndTitle);
   router.post("/sections", sectionsTables.addCategoryAndTitle);
+  router.delete(
+    "/sections-category/:category",
+    sectionsTables.deleteAllCategory
+  );
+  router.delete(
+    "/sections-category/:category/:title",
+    sectionsTables.deleteByCategoryAndTitle
+  );
 
   // Processed
   // router.post("/procesar-generaltables", processedTable.dataAnual);

@@ -37,6 +37,23 @@ exports.deleteCategory = async (req, res, next) => {
   }
 };
 
+exports.deleteIdCategory = async (req, res, next) => {
+  try {
+    const deletedCategory = await CategoryTable.findByIdAndDelete(
+      req.params.id
+    );
+
+    if (!deletedCategory) {
+      return res.status(404).json({ message: "Registro no encontrado" });
+    }
+
+    res.json({ message: "Registro eliminado exitosamente!" });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
 // Actualizar valores segun categoria
 exports.updateCountry = async (req, res, next) => {
   try {
