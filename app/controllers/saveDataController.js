@@ -32,3 +32,38 @@ exports.fetchSaveData = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.fetchSaveDataForName = async (req, res, next) => {
+  try {
+    const fetchDataForName = await saveDataSchema.find({
+      name: { $regex: req.params.name, $options: "i" },
+    });
+
+    if (fetchDataForName.length === 0) {
+      console.log(`Búsqueda sin resultados para: ${req.params.name}`);
+      return res.status(404).json({
+        message: `No se encontraron registros para el nombre: ${req.params.name}`,
+      });
+    }
+
+    res.json(fetchDataForName);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
+//DELETE
+
+exports.deleteSaveData = async (req, res, next) => {
+  try {
+    await saveDataSchema.deleteMany();
+    res.status(200).json({ message: "Datos eliminados correctamente!" });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ message: "Error al eliminar los datos", error: error.message });
+    next();
+  }
+};

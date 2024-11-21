@@ -36,6 +36,8 @@ module.exports = () => {
   // Save Data
   router.post("/save-data", SaveData.addData);
   router.get("/save-data", SaveData.fetchSaveData);
+  router.get("/save-data-name/:name", SaveData.fetchSaveDataForName);
+  router.delete("/save-data", SaveData.deleteSaveData);
 
   //Auth
   router.post("/login", authController.login);
