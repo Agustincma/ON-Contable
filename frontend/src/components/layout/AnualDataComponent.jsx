@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Button, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Button, MenuItem, Select, InputLabel, FormControl, Box } from '@mui/material';
 import { styled } from '@mui/system';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import axios from 'axios';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 // Estilos personalizados para la tabla
 const FullscreenContainer = styled(Paper)({
@@ -80,6 +83,29 @@ const PercentageTable = () => {
     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
   ];
 
+  const downloadExcel = () => {
+    const customHeaders = filteredData.map(({ category, name, title, country, year, value, months }) => ({
+      'Categoría': category,
+      'Nombre': name,
+      'Título': title,
+      'País': country,
+      'Año': year,
+      'Valor Inicial': value,
+      ...months.reduce((acc, monthValue, index) => {
+        acc[monthsOrder[index]] = monthValue;
+        return acc;
+      }, {})
+    }));
+  
+    const ws = XLSX.utils.json_to_sheet(customHeaders);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Datos');
+    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(blob, 'Datos_Personalizados.xlsx');
+  };
+  
+
   const handleSaveData = () => {
     // Aquí generamos un array con los datos calculados.
     const dataToSave = filteredData.map(item => ({
@@ -107,50 +133,61 @@ const PercentageTable = () => {
 
   return (
     <FullscreenContainer>
-      <FormControl fullWidth>
-        <InputLabel id="year-select-label">Año</InputLabel>
-        <Select
-          labelId="year-select-label"
-          value={year}
-          onChange={handleFilterYear}
-          label="Año"
-          sx={{borderRadius: '30px', width: '100%'}}
-        >
-          <MenuItem value="">
-            <em>Todos</em>
-          </MenuItem>
-          {uniqueYears.map(year => (
-            <MenuItem key={year} value={year}>{year}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <Box sx={{width: '100%', height: '100px',display: 'flex', justifyContent: 'center', gap: '10px', alignContent: "center", alignItems: 'center'}}>
+        <FormControl fullWidth>
+          <InputLabel id="year-select-label">Año</InputLabel>
+          <Select
+            labelId="year-select-label"
+            value={year}
+            onChange={handleFilterYear}
+            label="Año"
+            sx={{borderRadius: '30px', width: '100%'}}
+          >
+            <MenuItem value="">
+              <em>Todos</em>
+            </MenuItem>
+            {uniqueYears.map(year => (
+              <MenuItem key={year} value={year}>{year}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-      <TextField
-        label="Porcentaje Aplicado (%)"
-        type="number"
-        value={percentage}
-        onChange={(e) => setPercentage(e.target.value)}
-        fullWidth
-        margin="normal"
-        sx={{
-          width: '100%',
-          borderRadius: '30px',
-          color: 'black',
-          backgroundColor: '#fff',
-          '& .MuiOutlinedInput-root': {
+        <TextField
+          label="Porcentaje Aplicado (%)"
+          type="number"
+          value={percentage}
+          onChange={(e) => setPercentage(e.target.value)}
+          fullWidth
+          margin="normal"
+          sx={{
+            width: '100%',
             borderRadius: '30px',
-          },
-        }}
-      />
+            color: 'black',
+            backgroundColor: '#fff',
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '30px',
+            },
+          }}
+        />
 
-      <Button variant="contained" color="primary" onClick={handleApplyPercentage} sx={{ width: '200px', borderRadius: '30px', backgroundColor: '#fff600', color: '#000' }}>
-        Aplicar Porcentaje
-      </Button>
+        <Button variant="contained" color="primary" onClick={handleApplyPercentage} sx={{ width: '200px', padding: '10px', borderRadius: '30px', backgroundColor: '#fff600', color: '#000' }}>
+          Apply
+        </Button>
 
-      {/* Botón Save */}
-      <Button variant="contained" color="secondary" onClick={handleSaveData} sx={{ width: '200px', borderRadius: '30px', backgroundColor: '#4caf50', color: '#fff', marginTop: '16px' }}>
-        Guardar Datos
-      </Button>
+        {/* Botón Save */}
+        <Button variant="contained" color="secondary" onClick={handleSaveData} sx={{ width: '200px', padding: '10px', borderRadius: '30px', backgroundColor: '#1a1a1a', color: '#fff600', }}>
+          Save
+        </Button>
+
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={downloadExcel}
+          sx={{ width: '200px', padding: '10px', borderRadius: '30px', backgroundColor: '#fff600', color: '#1a1a1a', }}
+        >
+          <CloudDownloadIcon />
+        </Button>
+      </Box>
 
       <TableContainer component={Paper}>
         <Table>

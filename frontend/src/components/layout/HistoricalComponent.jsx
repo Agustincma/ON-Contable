@@ -23,6 +23,8 @@ import { styled } from '@mui/system';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 const FullscreenContainer = styled(Paper)({
   height: '70vh',
@@ -101,6 +103,15 @@ const HistoricalComponent = () => {
     setFilteredData(filtered);
   };
 
+  const downloadExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(filteredData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'HistoricalData');
+    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(blob, 'historical_data.xlsx');
+  };
+
   const handleOpenModal = () => {
     setOpenModal(true);
   };
@@ -161,8 +172,8 @@ const HistoricalComponent = () => {
 
   return (
     <FullscreenContainer>
-      <Box display="flex" flexDirection="column" alignItems="flex-start" width="100%">
-        <FormControl fullWidth variant="outlined" margin="normal">
+      <Box display="flex" flexDirection="column" alignItems="flex-start" width="100%" >
+        <FormControl fullWidth variant="outlined" margin="normal" height="100%">
           <InputLabel>Filtrar por nombre</InputLabel>
           <Select
             value={searchName}
@@ -184,7 +195,7 @@ const HistoricalComponent = () => {
         </FormControl>
       </Box>
 
-      <TableContainer component={Paper} sx={{ maxHeight: '400px', overflow: 'auto' }}>
+      <TableContainer component={Paper} sx={{ maxHeight: '600px', overflow: 'auto' }}>
         <Table aria-label="Historical Data">
           <TableHead>
             <TableRow>
@@ -227,14 +238,15 @@ const HistoricalComponent = () => {
         <Button
           variant="contained"
           color="primary"
-          sx={{ width: '100px', borderRadius: '30px', backgroundColor: '#fff600', color: '#000' }}
+          onClick={downloadExcel}
+          sx={{ width: '100px', borderRadius: '30px', backgroundColor: '#fff600', color: '#1a1a1a' }}
         >
           <CloudDownloadIcon />
         </Button>
         <Button
           variant="contained"
           color="primary"
-          sx={{ width: '100px', borderRadius: '30px', backgroundColor: '#fff600', color: '#000' }}
+          sx={{ width: '100px', borderRadius: '30px', backgroundColor: '#1a1a1a', color: '#fff600' }}
           onClick={handleOpenModal}
         >
           <EditIcon />

@@ -198,7 +198,10 @@ const FormComponent = () => {
             variant="outlined"
             size="small"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value.replace(/[^a-z]/g, ''); 
+              setName(value);
+            }}
             sx={{
               width: '250px',
               borderRadius: '30px',
@@ -210,6 +213,7 @@ const FormComponent = () => {
             }}
             error={!!message && !name}
           />
+
 
           <Box align="center" sx={{display: 'flex', width: '400px', justifyContent: 'space-around'}}>
             <Select
