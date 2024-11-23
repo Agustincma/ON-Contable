@@ -335,8 +335,8 @@ const FormComponent = () => {
         ))}
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-        <Button variant="contained" onClick={handleSubmit} sx={{ width: '200px', borderRadius: '30px', backgroundColor: '#fff600', color: '#000' }}>
-          Enviar
+        <Button variant="contained" onClick={handleSubmit} sx={{ width: '150px', borderRadius: '30px', backgroundColor: '#fff600', color: '#000' }}>
+          Send
         </Button>
       </Box>
       {message && (

@@ -174,11 +174,11 @@ const HistoricalComponent = () => {
     <FullscreenContainer>
       <Box display="flex" flexDirection="column" alignItems="flex-start" width="100%" >
         <FormControl fullWidth variant="outlined" margin="normal" height="100%">
-          <InputLabel>Filtrar por nombre</InputLabel>
+          <InputLabel>Filter for Name</InputLabel>
           <Select
             value={searchName}
             onChange={handleFilterChange}
-            label="Filtrar por nombre"
+            label="Filter for Name"
             displayEmpty
             color='black'
             sx={{borderRadius: '30px'}}

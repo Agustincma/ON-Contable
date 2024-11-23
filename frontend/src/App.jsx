@@ -61,7 +61,7 @@ function App() {
               <Route path='/login' element={<LoginView />} />
               <Route path='/create' element={<CreateUserView/>} />
               <Route path='/principal' element={<ContenidoComponent/>} />
-              <Route path="*" element={<Navigate to="/login" />} /> {/* Ruta por defecto */}
+              <Route path="*" element={<Navigate to="/principal" />} /> {/* Ruta por defecto */}
             </Routes>
 
           </Grid>
@@ -79,6 +79,7 @@ function App() {
           
         </Grid>
       </Box>
+
     </Box>
   );
 }

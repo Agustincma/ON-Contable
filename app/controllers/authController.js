@@ -1,6 +1,6 @@
 // authController.js
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 
 exports.login = async (req, res) => {
@@ -43,11 +43,9 @@ exports.createUser = async (req, res) => {
   console.log("Received data:", req.body); // Verifica qué datos están llegando
 
   if (!password || password.length < 6) {
-    return res
-      .status(400)
-      .json({
-        message: "Password is required and must be at least 6 characters long.",
-      });
+    return res.status(400).json({
+      message: "Password is required and must be at least 6 characters long.",
+    });
   }
 
   try {

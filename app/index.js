@@ -1,4 +1,4 @@
-// index.js - Local
+// index.js
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const express = require("express");
@@ -6,25 +6,40 @@ const routes = require("./routes/index");
 const authRoutes = require("./routes/authRoutes");
 const cors = require("cors");
 const app = express();
-const port = 3005;
+const port = process.env.PORT || 3005;
+
+// Configurar promesas de mongoose
 mongoose.Promise = global.Promise;
+
+// Leer la URI de MongoDB desde variables de entorno
+const mongoURI = process.env.MONGO_URI || "mongodb://localhost/on-contable";
+
+// Conectar a MongoDB
 mongoose
-  .connect("mongodb://localhost/on-contable")
+  .connect(mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log(`Conexion exitosa a la Base de datos ✅`))
   .catch((error) => {
-    console.log(`Ha ocurrido un error en la conexión a la Base de datos! ❌`);
-    console.log(error);
+    console.error(`Ha ocurrido un error en la conexión a la Base de datos! ❌`);
+    console.error(error);
   });
+
 // Middleware
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(cors({ origin: process.env.CLIENT_URL || "http://localhost:5173" }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
 // Rutas
 app.use("/", routes());
 app.use("/auth", authRoutes);
+
+// Iniciar el servidor
 app.listen(port, () => {
   console.log(`El servidor esta corriendo en el puerto ${port} ✅`);
 });
+
 // prod
 // const express = require("express");
 // const mongoose = require("mongoose");
