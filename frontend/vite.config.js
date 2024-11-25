@@ -12,5 +12,12 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/generaltables/, ""),
       },
     },
+    hmr: {
+      protocol: "ws",
+      host: "localhost",
+    },
+    watch: {
+      usePolling: true,
+    },
   },
 });

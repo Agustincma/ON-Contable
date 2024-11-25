@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { TextField, Button, Typography, Paper, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Para manejar redirección
 
 // Estilo personalizado para el contenedor del formulario
 const FullscreenTableContainer = styled(Paper)({
@@ -16,44 +17,39 @@ const FullscreenTableContainer = styled(Paper)({
   gap: '16px',
   borderRadius: '30px',
   overflow: 'auto',
-  backgroundColor: '#1a1a1a'
+  backgroundColor: '#1a1a1a',
 });
 
 const LoginForm = () => {
-  const [username, setUsername] = useState('');  // Cambié email a username
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); // Hook para redirección
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
       const response = await axios.post('http://localhost:3005/auth/login', {
-        username,  // Usamos username en lugar de email
+        username,
         password,
       });
 
-      console.log(response.data); 
-      setError('');
-      
-      // Almacenar el token en localStorage si lo devuelve la API
+      console.log('Response:', response.data);
+
       if (response.data.token) {
         localStorage.setItem('authToken', response.data.token);
+        setError('');
+        navigate('/principal'); // Redirigir a la ruta principal
       }
-
-      // Limpiar los campos
-      setUsername('');
-      setPassword('');
     } catch (err) {
+      console.error('Error:', err);
       if (err.response) {
-        // El servidor respondió con un error
         setError(err.response.data.message || 'Credenciales incorrectas');
       } else if (err.request) {
-        // La solicitud fue realizada, pero no hubo respuesta
         setError('Error de red, por favor intente más tarde');
       } else {
-        // Algo ocurrió al configurar la solicitud
         setError('Error desconocido');
       }
     } finally {
@@ -64,21 +60,19 @@ const LoginForm = () => {
   return (
     <FullscreenTableContainer elevation={3}>
       <Box sx={{ color: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
-        <div>
-          <h4 style={{ fontWeight: 'bold' }}>User Login</h4>
-          <p>Enter your user credentials to login.</p>
-        </div>
+        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>User Login</Typography>
+        <Typography variant="body2">Enter your user credentials to login.</Typography>
       </Box>
 
       {error && <Typography color="error">{error}</Typography>}
-      
+
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <TextField
-          label="Username"  // Cambié email a username
-          type="text"  // Cambié el tipo a texto
+          label="Username"
+          type="text"
           variant="outlined"
-          value={username}  // Usamos username en lugar de email
-          onChange={(e) => setUsername(e.target.value)}  // Actualizamos el estado de username
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           required
           fullWidth
           sx={{
@@ -104,12 +98,11 @@ const LoginForm = () => {
               },
               '& .MuiOutlinedInput-input': {
                 color: '#FFF',  
-              }
+              },
             },
           }}
-          aria-label="Username"
         />
-        
+
         <TextField
           label="Password"
           type="password"
@@ -141,18 +134,22 @@ const LoginForm = () => {
               },
               '& .MuiOutlinedInput-input': {
                 color: '#FFF',  
-              }
+              },
             },
           }}
-          aria-label="Password"
         />
-        
-        <Button 
-          type="submit" 
-          variant="contained" 
-          color="primary" 
-          fullWidth 
-          sx={{ width: '100%', borderRadius: '30px', backgroundColor: '#fff600', color: '#000' }} 
+
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          sx={{
+            backgroundColor: '#fff600',
+            color: '#000',
+            borderRadius: '30px',
+            '&:hover': { backgroundColor: '#e6e600' },
+          }}
           disabled={loading}
         >
           {loading ? 'Cargando...' : 'Login'}
